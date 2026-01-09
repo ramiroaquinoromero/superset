@@ -160,3 +160,28 @@ test('SET_NATIVE_FILTERS_CONFIG_COMPLETE treats empty arrays as valid scope prop
   expect(result.filters.filter1.chartsInScope).toEqual([]);
   expect(result.filters.filter1.tabsInScope).toEqual([]);
 });
+
+test('SET_NATIVE_FILTERS_CONFIG_COMPLETE removes filters that are not in the response', () => {
+  const initialState = {
+    filters: {
+      filter1: createMockFilter('filter1', [1, 2], ['tab1']),
+      filter2: createMockFilter('filter2', [3, 4], ['tab2']),
+      filter3: createMockFilter('filter3', [5, 6], ['tab3']),
+    },
+  };
+
+  // Only filter1 and filter3 are in the response (filter2 was deleted)
+  const action = {
+    type: SET_NATIVE_FILTERS_CONFIG_COMPLETE as typeof SET_NATIVE_FILTERS_CONFIG_COMPLETE,
+    filterChanges: [
+      createMockFilter('filter1', [1, 2], ['tab1']),
+      createMockFilter('filter3', [5, 6], ['tab3']),
+    ],
+  };
+
+  const result = nativeFilterReducer(initialState, action);
+
+  expect(result.filters.filter1).toBeDefined();
+  expect(result.filters.filter2).toBeUndefined();
+  expect(result.filters.filter3).toBeDefined();
+});

@@ -144,20 +144,38 @@ export function useSelectFiltersInScope(filters: (Filter | Divider)[]) {
     let filtersInScope: (Filter | Divider)[] = [];
     const filtersOutOfScope: (Filter | Divider)[] = [];
 
-    // we check native filters scopes only on dashboards with tabs
-    if (!dashboardHasTabs) {
-      filtersInScope = filters;
-    } else {
-      filters.forEach(filter => {
-        const filterInScope = isFilterInScope(filter);
+    filters.forEach(filter => {
+      // Dividers are always in scope
+      if (isFilterDivider(filter)) {
+        filtersInScope.push(filter);
+        return;
+      }
 
+      // If dashboard has tabs, check scope based on visibility
+      if (dashboardHasTabs) {
+        const filterInScope = isFilterInScope(filter);
         if (filterInScope) {
           filtersInScope.push(filter);
         } else {
           filtersOutOfScope.push(filter);
         }
-      });
-    }
+      } else {
+        // If no tabs, check if filter has any charts in scope
+        // Only mark as out of scope if chartsInScope is explicitly defined AND empty
+        const hasExplicitChartsInScope = Array.isArray(filter.chartsInScope);
+        const hasChartsInScope =
+          hasExplicitChartsInScope && filter.chartsInScope!.length > 0;
+
+        // If chartsInScope is not defined at all, treat as in scope (for backwards compatibility)
+        // If chartsInScope is explicitly set to empty array, mark as out of scope
+        if (!hasExplicitChartsInScope || hasChartsInScope) {
+          filtersInScope.push(filter);
+        } else {
+          filtersOutOfScope.push(filter);
+        }
+      }
+    });
+
     return [filtersInScope, filtersOutOfScope];
   }, [filters, dashboardHasTabs, isFilterInScope]);
 }

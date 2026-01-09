@@ -67,12 +67,13 @@ function handleFilterChangesComplete(
   state: ExtendedNativeFiltersState,
   filters: Filter[],
 ) {
-  const modifiedFilters = { ...state.filters };
+  const modifiedFilters: Record<string, Filter | Divider> = {};
+  // Build fresh filter list from server response to ensure deleted filters are removed
   filters.forEach(filter => {
     if (filter.chartsInScope != null && filter.tabsInScope != null) {
       modifiedFilters[filter.id] = filter;
     } else {
-      const existingFilter = modifiedFilters[filter.id];
+      const existingFilter = state.filters[filter.id];
       modifiedFilters[filter.id] = {
         ...filter,
         chartsInScope: filter.chartsInScope ?? existingFilter?.chartsInScope,

@@ -254,6 +254,14 @@ const FilterControls: FC<FilterControlsProps> = ({
           />
         )}
 
+        {!showCollapsePanel && filtersOutOfScope.length > 0 && (
+          <FiltersOutOfScopeCollapsible
+            filtersOutOfScope={filtersOutOfScope}
+            renderer={renderer}
+            forceRender={hasRequiredFirst}
+          />
+        )}
+
         {chartCustomizationItems.length > 0 && (
           <SectionContainer>
             {!hideHeader && (
