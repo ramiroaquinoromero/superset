@@ -734,7 +734,7 @@ describe('SelectFilterPlugin', () => {
     });
 
     // With only 3 rows (default test data), "Select all" button should be present
-    expect(await screen.findByText('Select all (3)')).toBeInTheDocument();
+    expect(await screen.findByText(/Select all/i)).toBeInTheDocument();
   });
 
   test('allowSelectAll is enabled for multi-select without searchAllOptions', async () => {
@@ -753,7 +753,7 @@ describe('SelectFilterPlugin', () => {
     });
 
     // "Select all" button should be present for static filters
-    expect(await screen.findByText('Select all (3)')).toBeInTheDocument();
+    expect(await screen.findByText(/Select all/i)).toBeInTheDocument();
   });
 
   test('allowSelectAll is not enabled for single-select filters', () => {

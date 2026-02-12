@@ -108,6 +108,9 @@ const StyledSpace = styled(Space)<{
   }
 `;
 
+/** Option count above which "Select All" is disabled when searchAllOptions is enabled (performance). */
+const SELECT_ALL_DISABLED_OPTIONS_THRESHOLD = 1000;
+
 // Keep track of orientation changes outside component with filter ID
 const orientationMap = new Map<string, FilterBarOrientation>();
 
@@ -509,7 +512,11 @@ export default function PluginFilterSelect(props: PluginFilterSelectProps) {
             allowClear
             allowNewOptions={!searchAllOptions && creatable !== false}
             allowSelectAll={
-              multiSelect && !(searchAllOptions && data.length >= 1000)
+              multiSelect &&
+              !(
+                searchAllOptions &&
+                data.length >= SELECT_ALL_DISABLED_OPTIONS_THRESHOLD
+              )
             }
             value={multiSelect ? filterState.value || [] : filterState.value}
             disabled={isDisabled}
